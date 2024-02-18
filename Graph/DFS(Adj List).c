@@ -1,81 +1,68 @@
 #include<stdio.h>
 #include<stdlib.h>
+#define MAXNODES 10
 
-#define MAX_NODES 100
-
-// Node structure for adjacency list
-struct Node {
+struct Node
+{
     int data;
-    struct Node* next;
+    struct Node *next
+};
+struct Node* graph[MAXNODES];
+int visited[MAXNODES];
+int numnodes;
+
+struct Node* newNode(int node)
+{
+    struct Node* newnode=(struct Node*)malloc(sizeof(struct Node));
+    newnode->data=node;
+    newnode->next=NULL;
+    return newnode;
 };
 
-struct Node* graph[MAX_NODES];
-int visited[MAX_NODES];
-int numNodes;
-
-// Function to create a new node
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
+void addedge(int src,int des)
+{
+    struct Node* newnode=newNode(des);
+    newnode->next=graph[src];
+    graph[src]=newnode;
 }
-
-// Function to add an edge to the adjacency list
-void addEdge(int src, int dest) {
-    struct Node* newNode = createNode(dest);
-    newNode->next = graph[src];
-    graph[src] = newNode;
-
-    /*newNode = createNode(src);
-    newNode->next = graph[dest];
-    graph[dest] = newNode;*/
-}
-
-// Depth First Search recursive function
-void DFS(int node) {
-    printf("Pushing %d\n", node); // Print when pushing the node onto the stack
-    printf("%d ", node);
-    visited[node] = 1;
-
-    struct Node* temp = graph[node];
-    while (temp != NULL) {
-        int adjNode = temp->data;
-        if (!visited[adjNode]) {
-            DFS(adjNode);
+void dfs(int node)
+{
+    printf("Pushing %d ",node);
+    visited[node]=1;
+    struct Node* temp=graph[node];
+    while(temp!=NULL)
+    {
+        int dt=temp->data;
+        if(visited[dt]==0)
+        {
+            dfs(dt);
         }
-        temp = temp->next;
+        temp=temp->next;
     }
-
-    printf("Popping %d\n", node); // Print when popping the node off the stack
+    printf("Popping %d ",node);
 }
 
-int main() {
-    int numEdges;
-    printf("Enter the number of nodes: ");
-    scanf("%d", &numNodes);
-
-    printf("Enter the number of edges: ");
-    scanf("%d", &numEdges);
-
-    // Initialize adjacency list and visited array
-    for (int i = 0; i < numNodes; i++) {
-        visited[i] = 0;
-        graph[i] = NULL;
+void main()
+{
+    printf("Enter no. of nodes:\n");
+    scanf("%d",&numnodes);
+    int edges=0;
+    printf("Enter no. of edges:\n");
+    scanf("%d",&edges);
+    printf("Enter the connections:node 1 node 2 \n");
+    int node1,node2;
+    for(int i=0;i<edges;i++)
+    {
+        scanf("%d %d",&node1,&node2);
+        addedge(node1,node2);
     }
-
-    // Input edges
-    printf("Enter the edges (format: node1 node2):\n");
-    for (int i = 0; i < numEdges; i++) {
-        int node1, node2;
-        scanf("%d %d", &node1, &node2);
-        addEdge(node1, node2);
+    for(int i=0;i<numnodes;i++)
+    {
+        visited[i]=0;
     }
-
-    printf("DFS Traversal starting from node 0: ");
-    DFS(0); // Start DFS from node 0
-
-    printf("\n");
-
-    return 0;
+    int start;
+    printf("Enter starting node:\n");
+    scanf("%d",&start);
+    printf("DFS traversal:\n");
+    dfs(start);
 }
