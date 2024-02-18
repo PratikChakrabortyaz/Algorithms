@@ -3,6 +3,7 @@
 
 #define MAX_NODES 10
 
+// Node structure for adjacency list
 struct Node {
     int data;
     struct Node* next;
@@ -10,79 +11,83 @@ struct Node {
 
 struct Node* graph[MAX_NODES];
 int visited[MAX_NODES];
-int numNodes;
+int numnodes;
 int stack[MAX_NODES];
-int top = -1;
-
-struct Node* newNode(int node) {
-    struct Node* newnode = (struct Node*)malloc(sizeof(struct Node));
-    newnode->data = node;
-    newnode->next = NULL;
-    return newnode;
+int top=-1;
+void push(int node)
+{
+    stack[++top]=node;
 }
-
-void addEdge(int src, int dest) {
-    struct Node* newnode = newNode(dest);
-    newnode->next = graph[src];
-    graph[src] = newnode;
-}
-
-void push(int node) {
-    stack[++top] = node;
-}
-
-int pop() {
+int pop()
+{
     return stack[top--];
 }
 
-void dfs(int node) {
-    visited[node] = 1;
-    struct Node* temp = graph[node];
-    while (temp != NULL) {
-        int adjNode = temp->data;
-        if (!visited[adjNode]) {
-            dfs(adjNode);
-        }
-        temp = temp->next;
-    }
-    push(node); // Push node onto the stack after visiting all its neighbors
+struct Node* createNode(int value)
+{
+    struct Node* newnode=(struct Node*)malloc(sizeof(struct Node));
+    newnode->data=value;
+    newnode->next=NULL;
+    return newnode;
+};
+
+void addedge(int src,int des)
+{
+    struct Node* newnode=createNode(des);
+    newnode->next=graph[src];
+    graph[src]=newnode;
 }
 
-void topologicalSort() {
-    for (int i = 0; i < numNodes; i++) {
-        if (!visited[i]) {
-            dfs(i);
+void DFS(int node)
+{
+    visited[node]=1;
+    struct Node* temp=graph[node];
+    while(temp!=NULL)
+    {
+        int dt=temp->data;
+        if(visited[dt]==0)
+        {
+            DFS(dt);
         }
+        temp=temp->next;
+    }
+    push(node);
+}
+
+void topsort(int node)
+{
+    if(visited[node]==0)
+    {
+        DFS(node);
     }
 
-    printf("Topological Sorting: ");
-    while (top != -1) {
-        printf("%d ", pop()); // Pop nodes from the stack to get the topological order
+    while(top!=-1)
+    {
+        printf("%d ",pop());
     }
 }
 
-int main() {
-    printf("Enter the number of nodes: ");
-    scanf("%d", &numNodes);
-    int numEdges;
-    printf("Enter the number of edges: ");
-    scanf("%d", &numEdges);
-
-    for (int i = 0; i < numNodes; i++) {
-        visited[i] = 0;
-        graph[i] = NULL;
+void main()
+{
+    printf("Enter no. of nodes:\n");
+    scanf("%d",&numnodes);
+    int edges=0;
+    printf("Enter no. of edges:\n");
+    scanf("%d",&edges);
+    printf("Enter the connections:node 1 node 2 \n");
+    int node1,node2;
+    for(int i=0;i<edges;i++)
+    {
+        scanf("%d %d",&node1,&node2);
+        addedge(node1,node2);
     }
-
-    printf("Enter the edges (format: node1 node2):\n");
-    for (int i = 0; i < numEdges; i++) {
-        int node1, node2;
-        scanf("%d %d", &node1, &node2);
-        addEdge(node1, node2);
+    for(int i=0;i<numnodes;i++)
+    {
+        visited[i]=0;
     }
-
-    topologicalSort();
-
-    printf("\n");
-
-    return 0;
+    int start;
+    printf("Enter starting node:\n");
+    scanf("%d",&start);
+    printf("Topological Sort traversal:\n");
+    topsort(start);
 }
