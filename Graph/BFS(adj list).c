@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_NODES 100
+#define MAX_NODES 10
 
-// Node structure for adjacency list
 struct Node {
     int data;
     struct Node* next;
@@ -11,101 +10,93 @@ struct Node {
 
 struct Node* graph[MAX_NODES];
 int visited[MAX_NODES];
-int queue[MAX_NODES];
-int front = -1, rear = -1;
 int numNodes;
-
-// Function to create a new node
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
-
-// Function to add an edge to the adjacency list
-void addEdge(int src, int dest) {
-    struct Node* newNode = createNode(dest);
-    newNode->next = graph[src];
-    graph[src] = newNode;
-}
-
-// Function to add a node to the queue
-void enqueue(int node) {
-    if (rear == MAX_NODES - 1) {
+int queue[MAX_NODES];
+int front=-1;int rear=-1;
+void enqueue(int node)
+{
+    if(rear==MAX_NODES-1)
+    {
         return;
     }
-    if (front == -1) {
-        front = 0;
-    }
-    rear++;
-    queue[rear] = node;
+    queue[++rear]=node;
 }
-
-// Function to remove a node from the queue
-int dequeue() {
-    if (front == -1 || front > rear) {
+int dequeue()
+{
+    if(front==-1||front>rear)
+    {
         return -1;
     }
-    int node = queue[front];
-    front++;
-    return node;
+    if(front==-1)
+    {
+        front=0;
+    }
+    return queue[front++];
 }
 
-// Breadth First Search traversal function
-void BFS(int start) {
-    enqueue(start); // Enqueue the starting node
-    visited[start] = 1; // Mark starting node as visited
+struct Node* newNode(int node) {
+    struct Node* newnode = (struct Node*)malloc(sizeof(struct Node));
+    newnode->data = node;
+    newnode->next = NULL;
+    return newnode;
+}
 
-    while (front != -1) {
-        int current = dequeue(); // Dequeue a node
+void addEdge(int src, int dest) {
+    struct Node* newnode = newNode(dest);
+    newnode->next = graph[src];
+    graph[src] = newnode;
+}
 
-        if (current == -1) {
-            break; // Break the loop if the queue is empty
+void bfs(int node)
+{
+    enqueue(node);
+    visited[node]=1;
+    while(front!=-1)
+    {
+        int current=dequeue();
+        if(current==-1)
+        {
+            break;
         }
+        printf("%d ",current);
+        struct Node* temp=graph[current];
+        while(temp!=NULL)
+        {
+            int dt=temp->data;
+            if(visited[dt]==0)
+            {
+                enqueue(dt);
+                visited[dt]=1;
 
-        printf("%d ", current); // Print the dequeued node
-
-        // Visit all adjacent nodes of the dequeued node
-        struct Node* temp = graph[current];
-        while (temp != NULL) {
-            int adjNode = temp->data;
-            if (!visited[adjNode]) {
-                enqueue(adjNode); // Enqueue adjacent node if not visited
-                visited[adjNode] = 1; // Mark adjacent node as visited
             }
-            temp = temp->next;
+            temp=temp->next;
         }
     }
 }
 
 int main() {
-    int numEdges;
     printf("Enter the number of nodes: ");
     scanf("%d", &numNodes);
-
-    for (int i = 0; i < numNodes; i++) {
-        visited[i] = 0;
-        graph[i] = NULL;
-    }
-
+    int numEdges;
+    int start;
     printf("Enter the number of edges: ");
     scanf("%d", &numEdges);
 
-    // Input edges
+    for (int i = 0; i < numNodes; i++) {
+        graph[i] = NULL;
+    }
+
     printf("Enter the edges (format: node1 node2):\n");
     for (int i = 0; i < numEdges; i++) {
         int node1, node2;
         scanf("%d %d", &node1, &node2);
         addEdge(node1, node2);
     }
+    printf("Enter starting node:\n");
+    scanf("%d",&start);
 
-    int start;
-    printf("Enter the starting node for BFS: ");
-    scanf("%d", &start);
-
-    printf("BFS Traversal: ");
-    BFS(start);
+    printf("BFS:\n");
+    bfs(start);
 
     printf("\n");
 
