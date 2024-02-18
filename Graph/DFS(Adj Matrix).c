@@ -1,56 +1,48 @@
 #include<stdio.h>
 #include<stdlib.h>
+#define MAXNODES 10
 
-#define MAX_NODES 100
+int graph[MAXNODES][MAXNODES];
+int numnodes;
+int visited[MAXNODES];
 
-int graph[MAX_NODES][MAX_NODES];
-int visited[MAX_NODES];
-int numNodes;
-
-void DFS(int node) {
-    printf("Pushing %d\n", node); // Print when pushing the node onto the stack
-    printf("%d ", node);
-    visited[node] = 1;
-
-    for (int i = 0; i < numNodes; i++) {
-        if (graph[node][i] && !visited[i]) {
-            DFS(i);
+void dfs(int node)
+{
+    printf("Pushing %d ",node);
+    visited[node]=1;
+    for(int i=0;i<numnodes;i++)
+    {
+        if(graph[node][i]==1 && visited[i]==0)
+        {
+            dfs(i);
         }
     }
-
-    printf("Popping %d\n", node); // Print when popping the node off the stack
+    printf("Popping %d ",node);
 }
 
-int main() {
-    int numEdges;
-    printf("Enter the number of nodes: ");
-    scanf("%d", &numNodes);
-
-    printf("Enter the number of edges: ");
-    scanf("%d", &numEdges);
-
-    // Initialize graph matrix and visited array
-    for (int i = 0; i < numNodes; i++) {
-        visited[i] = 0;
-        for (int j = 0; j < numNodes; j++) {
-            graph[i][j] = 0;
-        }
+void main()
+{
+    printf("Enter no. of nodes:\n");
+    scanf("%d",&numnodes);
+    int edges=0;
+    printf("Enter no. of edges:\n");
+    scanf("%d",&edges);
+    printf("Enter the connections:node 1 node 2 \n");
+    int node1,node2;
+    for(int i=0;i<edges;i++)
+    {
+        scanf("%d %d",&node1,&node2);
+        graph[node1][node2]=1;
     }
-
-    // Input edges
-    printf("Enter the edges (format: node1 node2):\n");
-    for (int i = 0; i < numEdges; i++) {
-        int node1, node2;
-        scanf("%d %d", &node1, &node2);
-        graph[node1][node2] = 1;
-        //graph[node2][node1] = 1; // If graph is undirected
+    for(int i=0;i<numnodes;i++)
+    {
+        visited[i]=0;
     }
-
-    printf("DFS Traversal starting from node 0: ");
-    DFS(0); // Start DFS from node 0
-
-    printf("\n");
-
-    return 0;
+    int start;
+    printf("Enter starting node:\n");
+    scanf("%d",&start);
+    printf("DFS traversal:\n");
+    dfs(start);
 }
+
 
