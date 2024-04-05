@@ -5,18 +5,18 @@
 #define TABLE_SIZE 50 // Maximum size of the hash table
 
 // Structure for a node in the linked list
-typedef struct Node {
+struct Node {
     int key;
     struct Node* next;
-} Node;
+};
 
 // Structure for a hash table entry
-typedef struct {
-    Node* head; // Head of the linked list
-} Entry;
+struct Entry {
+    struct Node* head; // Head of the linked list
+};
 
 // Initialize hash table
-void initHashTable(Entry hashTable[], int size) {
+void initHashTable(struct Entry hashTable[], int size) {
     for (int i = 0; i < size; i++) {
         hashTable[i].head = NULL;
     }
@@ -28,9 +28,9 @@ int hash(int key, int size) {
 }
 
 // Insert key into the hash table
-void insert(Entry hashTable[], int key, int size) {
+void insert(struct Entry hashTable[], int key, int size) {
     int index = hash(key, size);
-    Node* newNode = (Node*)malloc(sizeof(Node));
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->key = key;
     newNode->next = NULL;
 
@@ -41,10 +41,10 @@ void insert(Entry hashTable[], int key, int size) {
 
 // Search for a key in the hash table
 // Returns the number of key comparisons made during the search
-int search(Entry hashTable[], int key, int size) {
+int search(struct Entry hashTable[], int key, int size) {
     int index = hash(key, size);
     int comparisons = 1;
-    Node* current = hashTable[index].head;
+    struct Node* current = hashTable[index].head;
     while (current != NULL) {
         if (current->key == key) {
             return comparisons; // Key found
@@ -68,7 +68,7 @@ int main() {
             int load_factor = n * 100 / m;
             printf("Hash Table Size: %d, Number of Keys: %d, Load Factor: %d%%\n", m, n, load_factor);
 
-            Entry hashTable[TABLE_SIZE];
+            struct Entry hashTable[TABLE_SIZE];
             initHashTable(hashTable, TABLE_SIZE);
 
             // Insert keys into hash table
@@ -97,3 +97,4 @@ int main() {
 
     return 0;
 }
+
