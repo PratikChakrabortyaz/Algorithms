@@ -50,6 +50,58 @@ def aStarAlgo(start_node, stop_node_list):
     print('Path does not exist!')
     return None
 
+def best_first_search(start_node, stop_node_list):     
+    open_set = set([start_node]) 
+    closed_set = set()
+    g = {} 
+    parents = {}
+    g[start_node] = 0
+    parents[start_node] = start_node
+         
+    while len(open_set) > 0:
+        n = None
+        for v in open_set:
+            if n == None or heuristic(v) < heuristic(n):
+                n = v
+                     
+        if n in stop_node_list or Graph_nodes[n] == None:
+            pass
+        else:
+            for (m, weight) in get_neighbors(n):
+                if m not in open_set and m not in closed_set:
+                    open_set.add(m)
+                    parents[m] = n
+                    g[m] = g[n] + weight
+                else:
+                    if g[m] > g[n] + weight:
+                        g[m] = g[n] + weight
+                        parents[m] = n
+                        if m in closed_set:
+                            closed_set.remove(m)
+                            open_set.add(m)
+ 
+        if n == None:
+            print('Path does not exist!')
+            return None
+        if n in stop_node_list:
+            path = []
+            while parents[n] != n:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found:', path)
+            # Calculate the cost of the path
+            cost = g[path[-1]]
+            print('Cost of the path:', cost)
+            return path
+ 
+        open_set.remove(n)
+        closed_set.add(n)
+ 
+    print('Path does not exist!')
+    return None
+
 def get_neighbors(v):
     if v in Graph_nodes:
         return Graph_nodes[v]
@@ -81,7 +133,9 @@ Graph_nodes = {
     'G1':[None],
     'G2':[None],
     'G3':[None],
-    'S':[('A',5),('D',6)],
+    'S':[('A',5),('D',6),('B',9)],
 }
 
 aStarAlgo('S', ['G1', 'G2', 'G3'])
+best_first_search('S', ['G1', 'G2', 'G3'])
+
