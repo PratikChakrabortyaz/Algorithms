@@ -102,6 +102,39 @@ def best_first_search(start_node, stop_node_list):
     print('Path does not exist!')
     return None
 
+def ucs(start_node, stop_node_list):
+    open_set = [(0, start_node)]
+    closed_set = set()
+    g = {start_node: 0}
+    parents = {start_node: None}
+    
+    while open_set:
+        cost, n = open_set.pop(0)
+        
+        if n in stop_node_list:
+            path = []
+            while n != start_node:
+                path.append(n)
+                n = parents[n]
+            path.append(start_node)
+            path.reverse()
+            print('Path found:', path)
+            # Calculate the cost of the path
+            print('Cost of the path:', cost)
+            return path
+        
+        closed_set.add(n)
+        for m, weight in get_neighbors(n):
+            new_cost = g[n] + weight
+            if m not in closed_set and (m not in g or new_cost < g[m]):
+                g[m] = new_cost
+                parents[m] = n
+                open_set.append((new_cost, m))
+                open_set.sort(key=lambda x: x[0])
+    
+    print('Path does not exist!')
+    return None
+
 def get_neighbors(v):
     if v in Graph_nodes:
         return Graph_nodes[v]
@@ -136,6 +169,13 @@ Graph_nodes = {
     'S':[('A',5),('D',6),('B',9)],
 }
 
+print("A* Algorithm:")
 aStarAlgo('S', ['G1', 'G2', 'G3'])
+
+print("\nBest-First Search:")
 best_first_search('S', ['G1', 'G2', 'G3'])
+
+print("\nUniform Cost Search:")
+ucs('S', ['G1', 'G2', 'G3'])
+
 
